@@ -7,19 +7,22 @@ import kotlin.properties.Delegates
  * Created by seraph on 08.01.2015 4:11.
  */
 
-public abstract class Cell<T> {
+public abstract class Cell<T> : ScopeComponent {
     public var value: T
         get() = read()
         set(value) = write(value)
 
-    public val trigger: Trigger<T> by Delegates.lazy {
+    public val trigger: CellChangeTrigger<T> by Delegates.lazy {
         createTrigger()
     };
 
     protected open fun notifyChanged(oldValue: T, newValue: T): Unit = trigger.arm(oldValue, newValue)
     protected abstract fun read(): T
     protected abstract fun write(newValue: T)
-    protected open fun createTrigger(): Trigger<T> = Trigger()
+    protected open fun createTrigger(): CellChangeTrigger<T> = CellChangeTrigger(this)
+
+    override val affectedComponents: Collection<ScopeComponent>
+        get() = listOf(trigger)
 }
 
 public class StatefulCell<T>(default: T) : Cell<T>() {

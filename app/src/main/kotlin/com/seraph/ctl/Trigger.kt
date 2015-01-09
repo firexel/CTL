@@ -2,7 +2,7 @@ package com.seraph.ctl
 
 import java.util.ArrayList
 
-public open class Trigger<T> {
+public open class Trigger<T> : ScopeComponent {
 
     private var listeners: MutableCollection<TriggerListener<T>> = ArrayList()
     synchronized public var isArmed: Boolean = false;
@@ -24,6 +24,12 @@ public open class Trigger<T> {
     synchronized fun removeListener(listener: TriggerListener<T>) {
         listeners.remove(listener)
     }
+}
+
+public class CellChangeTrigger<T>(cell: Cell<T>) : Trigger<T>() {
+    private val cell = cell;
+    override val precursorComponents: Collection<ScopeComponent>
+        get() = listOf(cell)
 }
 
 public trait TriggerListener<T> {
