@@ -4,13 +4,28 @@ import java.util.ArrayList
 
 public open class Trigger<T> {
 
-    private var listeners: MutableCollection<(T, T) -> Unit> = ArrayList()
+    private var listeners: MutableCollection<TriggerListener<T>> = ArrayList()
+    synchronized public var isArmed: Boolean = false;
+        private set
 
-    public fun listen(listener: (T, T) -> Unit) {
+    synchronized public fun addListener(listener: TriggerListener<T>) {
         this.listeners.add(listener)
     }
 
-    fun notify(old: T, new: T) {
-        listeners.forEach { it(old, new) }
+    synchronized fun arm(old: T, new: T) {
+        isArmed = true
+        listeners.forEach { it.onTriggerArmed(this, old, new) }
     }
+
+    synchronized fun disarm() {
+        isArmed = false
+    }
+
+    synchronized fun removeListener(listener: TriggerListener<T>) {
+        listeners.remove(listener)
+    }
+}
+
+public trait TriggerListener<T> {
+    public fun onTriggerArmed(trigger: Trigger<T>, oldValue: T, newValue: T)
 }

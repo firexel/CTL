@@ -16,7 +16,29 @@ public abstract class Cell<T> {
         createTrigger()
     };
 
+    protected open fun notifyChanged(oldValue: T, newValue: T): Unit = trigger.arm(oldValue, newValue)
     protected abstract fun read(): T
     protected abstract fun write(newValue: T)
     protected open fun createTrigger(): Trigger<T> = Trigger()
+}
+
+public class StatefulCell<T>(default: T) : Cell<T>() {
+    var storedValue: T = default;
+
+    synchronized override fun write(newValue: T) {
+        if (shouldAssignNewValue(newValue)) {
+            val oldValue = storedValue
+            storedValue = newValue
+            notifyChanged(oldValue, newValue)
+        }
+    }
+
+    private fun shouldAssignNewValue(newValue: T): Boolean {
+        val translateFromNull = storedValue == null && newValue != null
+        val translateToNull = storedValue != null && newValue == null
+        val notEquals = storedValue != null && newValue != null && !(storedValue equals newValue)
+        return translateFromNull || translateToNull || notEquals
+    }
+
+    synchronized override fun read(): T = storedValue
 }
