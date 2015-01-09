@@ -95,18 +95,37 @@ public class Scope(executor: Executor = ImmediateExecutor()) : TriggerListener<A
 
     public class LinkBuilder<T>(dstCell: Cell<T>) {
         private val dstCell: Cell<T> = dstCell;
-        private var directSrcCell: Cell<T>? = null
+        private var link: Link<T>? = null;
 
         fun with(directConnectionCell: Cell<T>) {
-            directSrcCell = directConnectionCell;
+            link = DirectLink(directConnectionCell, dstCell, directConnectionCell.trigger)
+        }
+
+        fun <P1> with(p1: Cell<P1>, rule: (P1) -> T) {
+            class RuleLink1<T, P1>(dstCell: Cell<T>, p1: Cell<P1>) :
+                    RuleLink<T>(dstCell, OrTrigger(p1.trigger)) {
+                override fun transfer() {
+                    dstCell.value = rule(p1.value) as T
+                }
+            }
+            link = RuleLink1(dstCell, p1)
+        }
+
+        fun <P1, P2> with(p1: Cell<P1>, p2: Cell<P2>, rule: (P1, P2) -> T) {
+            class RuleLink2<T, P1, P2>(dstCell: Cell<T>, p1: Cell<P1>, p2: Cell<P2>) :
+                    RuleLink<T>(dstCell, OrTrigger(p1.trigger, p2.trigger)) {
+                override fun transfer() {
+                    dstCell.value = rule(p1.value, p2.value) as T
+                }
+            }
+            link = RuleLink2(dstCell, p1, p2)
         }
 
         fun build(): Link<T> {
-            if (directSrcCell != null) {
-                return DirectLink(directSrcCell!!, dstCell, directSrcCell!!.trigger)
-            } else {
+            if (link == null) {
                 throw BuildException("Use with() method to set a link source")
             }
+            return link!!;
         }
     }
 }

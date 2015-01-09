@@ -30,3 +30,8 @@ public class DirectLink<T>(srcCell: Cell<T>, dstCell: Cell<T>, transferTrigger: 
         dstCell.value = srcCell.value
     }
 }
+
+public abstract class RuleLink<T>(dstCell: Cell<T>, transferTrigger: Trigger<T>) :
+        Link<T>(dstCell, transferTrigger) {
+
+}

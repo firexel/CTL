@@ -61,5 +61,25 @@ public class ScopeTest : TestCase() {
             // ignore
         }
     }
+
+    public fun test_scope_shouldBeAbleToConnect2CellsUsingRule() {
+        val src1 = StatefulCell(0)
+        val dst = StatefulCell("")
+        scope.link(dst).with(src1) {it.toString() }
+        scope.build()
+        src1.value = 7
+        assertEquals("7", dst.value)
+    }
+
+    public fun test_scope_shouldBeAbleToConnect3CellsUsingRule() {
+        val src1 = StatefulCell("")
+        val src2 = StatefulCell("")
+        val dst = StatefulCell("")
+        scope.link(dst).with(src1, src2) {(s1, s2) -> s1 + s2 }
+        scope.build()
+        src1.value = "a"
+        src2.value = "b"
+        assertEquals("ab", dst.value)
+    }
 }
 
