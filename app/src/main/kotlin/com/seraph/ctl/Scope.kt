@@ -40,6 +40,10 @@ public class Scope(executor: Executor = ImmediateExecutor()) : TriggerListener<A
             public val prevs: MutableCollection<Node> = HashSet()
             public val nexts: MutableCollection<Node> = HashSet()
             override fun toString(): String = payload.toString()
+            public fun pointTo(node: Node) {
+                nexts.add(node)
+                node.prevs.add(this)
+            }
         }
 
         val components = HashSet<ScopeComponent>()
@@ -53,15 +57,13 @@ public class Scope(executor: Executor = ImmediateExecutor()) : TriggerListener<A
         links.forEach { collectComponents(it) }
 
         val nodesMap = HashMap<ScopeComponent, Node>()
-        components.forEach { nodesMap.put(it, Node(it)) }
         components.forEach {
-            val node = nodesMap.get(it)
-            node.nexts.addAll(it.affectedComponents.map { nodesMap.get(it) })
-            node.nexts.forEach { it.prevs.add(node) }
-            node.prevs.addAll(it.precursorComponents.map { nodesMap.get(it) })
-            node.prevs.forEach { it.nexts.add(node) }
+            nodesMap[it] = Node(it)
         }
-
+        components map { nodesMap[it] } forEach { node ->
+            node.payload.affectedComponents map { nodesMap[it] } forEach { node pointTo it }
+            node.payload.precursorComponents map { nodesMap[it] } forEach { it pointTo node }
+        }
         val orderedNodes = ArrayList<Node>()
         val unprocessedNodes = ArrayList(nodesMap.values())
         while (unprocessedNodes.size() > 0) {
@@ -122,10 +124,7 @@ public class Scope(executor: Executor = ImmediateExecutor()) : TriggerListener<A
         }
 
         fun build(): Link<T> {
-            if (link == null) {
-                throw BuildException("Use with() method to set a link source")
-            }
-            return link!!;
+            return link ?: throw BuildException("Use with() method to set a link source")
         }
     }
 }
