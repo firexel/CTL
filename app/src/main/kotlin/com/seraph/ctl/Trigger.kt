@@ -8,10 +8,6 @@ public open class Trigger<T> {
     synchronized public var isArmed: Boolean = false;
         private set
 
-    synchronized public fun addListener(listener: TriggerListener<T>) {
-        this.listeners.add(listener)
-    }
-
     synchronized fun arm(old: T, new: T) {
         isArmed = true
         listeners.forEach { it.onTriggerArmed(this, old, new) }
@@ -19,6 +15,10 @@ public open class Trigger<T> {
 
     synchronized fun disarm() {
         isArmed = false
+    }
+
+    synchronized public fun addListener(listener: TriggerListener<T>) {
+        this.listeners.add(listener)
     }
 
     synchronized fun removeListener(listener: TriggerListener<T>) {
