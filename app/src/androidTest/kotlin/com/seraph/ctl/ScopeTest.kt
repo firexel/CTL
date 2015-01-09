@@ -4,7 +4,6 @@ import junit.framework.TestCase
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.fail
-import com.seraph.ctl.DegenerateExecutor
 
 /**
  * CTL
@@ -48,6 +47,19 @@ public class ScopeTest : TestCase() {
         scope.update()
         assertEquals("a", cells[1].value)
         assertEquals("a", cells[2].value)
+    }
+
+    public fun test_scope_shouldDetectCyclicDependencies() {
+        val cell1 = StatefulCell("")
+        val cell2 = StatefulCell("")
+        scope.link(cell1).with(cell2)
+        scope.link(cell2).with(cell1)
+        try {
+            scope.build()
+            fail("Exception not thrown")
+        } catch (ex: BuildException) {
+            // ignore
+        }
     }
 }
 
