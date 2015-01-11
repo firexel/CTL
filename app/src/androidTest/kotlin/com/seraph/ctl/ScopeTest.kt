@@ -65,7 +65,7 @@ public class ScopeTest : TestCase() {
     public fun test_scope_shouldBeAbleToConnect2CellsUsingRule() {
         val src1 = StatefulCell(0)
         val dst = StatefulCell("")
-        scope.link(dst).with(src1) {it.toString() }
+        scope.link(dst).with(src1) { it.toString() }
         scope.build()
         src1.value = 7
         assertEquals("7", dst.value)
@@ -80,6 +80,51 @@ public class ScopeTest : TestCase() {
         src1.value = "a"
         src2.value = "b"
         assertEquals("ab", dst.value)
+    }
+
+    public fun test_scope_shouldBeAbleToConnect4CellsUsingRule() {
+        val src1 = StatefulCell("")
+        val src2 = StatefulCell("")
+        val src3 = StatefulCell("")
+        val dst = StatefulCell("")
+        scope.link(dst).with(src1, src2, src3) {(s1, s2, s3) -> s1 + s2 + s3 }
+        scope.build()
+        src1.value = "a"
+        src2.value = "b"
+        src3.value = "c"
+        assertEquals("abc", dst.value)
+    }
+
+    public fun test_scope_shouldBeAbleToConnect5CellsUsingRule() {
+        val src1 = StatefulCell("")
+        val src2 = StatefulCell("")
+        val src3 = StatefulCell("")
+        val src4 = StatefulCell("")
+        val dst = StatefulCell("")
+        scope.link(dst).with(src1, src2, src3, src4) {(s1, s2, s3, s4) -> s1 + s2 + s3 + s4 }
+        scope.build()
+        src1.value = "a"
+        src2.value = "b"
+        src3.value = "c"
+        src4.value = "d"
+        assertEquals("abcd", dst.value)
+    }
+
+    public fun test_scope_shouldBeAbleToConnect6CellsUsingRule() {
+        val src1 = StatefulCell("")
+        val src2 = StatefulCell("")
+        val src3 = StatefulCell("")
+        val src4 = StatefulCell("")
+        val src5 = StatefulCell("")
+        val dst = StatefulCell("")
+        scope.link(dst).with(src1, src2, src3, src4, src5) {(s1, s2, s3, s4, s5) -> s1 + s2 + s3 + s4 + s5 }
+        scope.build()
+        src1.value = "a"
+        src2.value = "b"
+        src3.value = "c"
+        src4.value = "d"
+        src5.value = "e"
+        assertEquals("abcde", dst.value)
     }
 }
 

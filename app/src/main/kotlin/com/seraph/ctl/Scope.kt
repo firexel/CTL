@@ -123,6 +123,36 @@ public class Scope(executor: Executor = ImmediateExecutor()) : TriggerListener<A
             link = RuleLink2(dstCell, p1, p2)
         }
 
+        fun <P1, P2, P3> with(p1: Cell<P1>, p2: Cell<P2>, p3: Cell<P3>, rule: (P1, P2, P3) -> T) {
+            class RuleLink3<T, P1, P2, P3>(dstCell: Cell<T>, p1: Cell<P1>, p2: Cell<P2>, p3: Cell<P3>) :
+                    RuleLink<T>(dstCell, OrTrigger(p1.trigger, p2.trigger, p3.trigger)) {
+                override fun transfer() {
+                    dstCell.value = rule(p1.value, p2.value, p3.value) as T
+                }
+            }
+            link = RuleLink3(dstCell, p1, p2, p3)
+        }
+
+        fun <P1, P2, P3, P4> with(p1: Cell<P1>, p2: Cell<P2>, p3: Cell<P3>, p4: Cell<P4>, rule: (P1, P2, P3, P4) -> T) {
+            class RuleLink4<T, P1, P2, P3, P4>(dstCell: Cell<T>, p1: Cell<P1>, p2: Cell<P2>, p3: Cell<P3>, p4: Cell<P4>) :
+                    RuleLink<T>(dstCell, OrTrigger(p1.trigger, p2.trigger, p3.trigger, p4.trigger)) {
+                override fun transfer() {
+                    dstCell.value = rule(p1.value, p2.value, p3.value, p4.value) as T
+                }
+            }
+            link = RuleLink4(dstCell, p1, p2, p3, p4)
+        }
+
+        fun <P1, P2, P3, P4, P5> with(p1: Cell<P1>, p2: Cell<P2>, p3: Cell<P3>, p4: Cell<P4>, p5: Cell<P5>, rule: (P1, P2, P3, P4, P5) -> T) {
+            class RuleLink5<T, P1, P2, P3, P4, P5>(dstCell: Cell<T>, p1: Cell<P1>, p2: Cell<P2>, p3: Cell<P3>, p4: Cell<P4>, p5: Cell<P5>) :
+                    RuleLink<T>(dstCell, OrTrigger(p1.trigger, p2.trigger, p3.trigger, p4.trigger, p5.trigger)) {
+                override fun transfer() {
+                    dstCell.value = rule(p1.value, p2.value, p3.value, p4.value, p5.value) as T
+                }
+            }
+            link = RuleLink5(dstCell, p1, p2, p3, p4, p5)
+        }
+
         fun build(): Link<T> {
             return link ?: throw BuildException("Use with() method to set a link source")
         }
