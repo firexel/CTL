@@ -84,7 +84,10 @@ public class Scope(executor: Executor = ImmediateExecutor()) : TriggerListener<A
         doAsync { update() }
     }
 
-    private fun doAsync(func: () -> Unit) = executor.execute(func)
+    synchronized private fun doAsync(func: () -> Unit) {
+        executor.cancelAll()
+        executor.execute(func)
+    }
 
     synchronized public fun update() {
         links.forEach {(link) ->

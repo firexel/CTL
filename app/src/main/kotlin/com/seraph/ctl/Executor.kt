@@ -10,16 +10,11 @@ import android.os.Handler
 
 public trait Executor {
     public fun execute(func: () -> Unit)
-    public fun cancel(func: () -> Unit)
     public fun cancelAll()
 }
 
 public class DegenerateExecutor : Executor {
     override fun execute(func: () -> Unit) {
-        // do nothing
-    }
-
-    override fun cancel(func: () -> Unit) {
         // do nothing
     }
 
@@ -33,10 +28,6 @@ public class ImmediateExecutor : Executor {
         func()
     }
 
-    override fun cancel(func: () -> Unit) {
-        // do nothing
-    }
-
     override fun cancelAll() {
         // do nothing
     }
@@ -47,10 +38,6 @@ public class HandlerExecutor(looper: Looper? = null) : Executor {
 
     override fun execute(func: () -> Unit) {
         handler.post(func)
-    }
-
-    override fun cancel(func: () -> Unit) {
-        handler.removeCallbacks(func)
     }
 
     override fun cancelAll() {

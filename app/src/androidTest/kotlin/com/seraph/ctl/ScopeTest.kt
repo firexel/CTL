@@ -126,5 +126,32 @@ public class ScopeTest : TestCase() {
         src5.value = "e"
         assertEquals("abcde", dst.value)
     }
+
+    public fun test_scope_shouldCancelScheduledUpdatesIfNewUpdateNeeded() {
+        class TestExecutor : Executor {
+            var executions = 0;
+
+            override fun execute(func: () -> Unit) {
+                func()
+                executions++
+            }
+
+            override fun cancelAll() {
+                executions = 0;
+            }
+        }
+
+        val src = StatefulCell("")
+        val dst = StatefulCell("")
+        val executor = TestExecutor()
+        scope = Scope(executor)
+        scope.link(dst).with(src)
+        scope.build()
+        src.value = "a"
+        src.value = "b"
+        src.value = "c"
+        assertEquals(1, executor.executions)
+        assertEquals("c", dst.value)
+    }
 }
 
