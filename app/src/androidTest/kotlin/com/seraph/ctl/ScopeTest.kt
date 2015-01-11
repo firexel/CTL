@@ -4,6 +4,7 @@ import junit.framework.TestCase
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.fail
+import java.util.ArrayList
 
 /**
  * CTL
@@ -128,29 +129,27 @@ public class ScopeTest : TestCase() {
     }
 
     public fun test_scope_shouldCancelScheduledUpdatesIfNewUpdateNeeded() {
-        class TestExecutor : Executor {
-            var executions = 0;
+        class TestAsyncExecutor : Executor {
+            var pendingExecutions: MutableCollection<() -> Unit> = ArrayList()
 
             override fun execute(func: () -> Unit) {
-                func()
-                executions++
+                pendingExecutions.add(func)
             }
 
-            override fun cancelAll() {
-                executions = 0;
-            }
+            override fun cancelAll() = pendingExecutions.clear()
         }
 
         val src = StatefulCell("")
         val dst = StatefulCell("")
-        val executor = TestExecutor()
+        val executor = TestAsyncExecutor()
         scope = Scope(executor)
         scope.link(dst).with(src)
         scope.build()
         src.value = "a"
         src.value = "b"
         src.value = "c"
-        assertEquals(1, executor.executions)
+        assertEquals(1, executor.pendingExecutions.size())
+        executor.pendingExecutions.forEach { it() }
         assertEquals("c", dst.value)
     }
 }
