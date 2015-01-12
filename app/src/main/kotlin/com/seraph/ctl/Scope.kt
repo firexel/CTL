@@ -13,10 +13,16 @@ public class Scope(executor: Executor = ImmediateExecutor()) : TriggerListener<A
     private val pendingBuildings: MutableCollection<() -> Link<Any?>> = ArrayList()
     private val links: MutableCollection<Link<Any?>> = ArrayList()
 
-    fun <T> link(dstCell: Cell<T>): LinkBuilder<T> {
+    synchronized fun <T> link(dstCell: Cell<T>): LinkBuilder<T> {
         val builder = LinkBuilder(dstCell)
         pendingBuildings.add { builder.build() as Link<Any?> }
         return builder
+    }
+
+    synchronized fun <T> unlink(cell: Cell<T>) {
+        val newList = ArrayList(links.filter { !it.dstCell.identityEquals(cell) })
+        links.clear()
+        links.addAll(newList)
     }
 
     synchronized public fun build() {
@@ -90,12 +96,8 @@ public class Scope(executor: Executor = ImmediateExecutor()) : TriggerListener<A
     }
 
     synchronized public fun update() {
-        links.forEach {(link) ->
-            if (link.isTransferNeeded) {
-                link.transfer()
-            }
-            link.transferTrigger.disarm()
-        }
+        links.forEach {(link) -> if (link.isTransferNeeded) link.transfer() }
+        links.forEach {(link) -> link.transferTrigger.disarm() }
     }
 
     public class LinkBuilder<T>(dstCell: Cell<T>) {

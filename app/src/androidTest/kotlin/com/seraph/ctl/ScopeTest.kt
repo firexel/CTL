@@ -152,5 +152,22 @@ public class ScopeTest : TestCase() {
         executor.pendingExecutions.forEach { it() }
         assertEquals("c", dst.value)
     }
+
+    public fun test_scope_shouldBeAbleToUnlinkCell() {
+        val src = StatefulCell("");
+        val dst1 = StatefulCell("");
+        val dst2 = StatefulCell("");
+        scope.link(dst1).with(src)
+        scope.link(dst2).with(src)
+        scope.build()
+        src.value = "a"
+        assertEquals("a", dst1.value)
+        assertEquals("a", dst2.value)
+        scope.unlink(dst1)
+        scope.build()
+        src.value = "b"
+        assertEquals("a", dst1.value)
+        assertEquals("b", dst2.value)
+    }
 }
 
