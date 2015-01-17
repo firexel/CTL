@@ -1,0 +1,6 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.seraph.ctl">
+    <application>
+        <activity android:name="com.seraph.ctl.ViewConnectorActivityTest$ViewConnectorTestActivity"/>
+    </application>
+</manifest>
