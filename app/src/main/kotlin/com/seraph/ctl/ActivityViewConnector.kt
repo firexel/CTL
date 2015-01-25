@@ -1,13 +1,32 @@
 package com.seraph.ctl
 
 import android.app.Activity
-import kotlin.properties.Delegates
 import android.os.Bundle
+import kotlin.properties.Delegates
+import android.view.View
 
-/**
- * CTL
- * Created by seraph on 18.01.2015 0:25.
- */
+public abstract class ActivityViewConnector() : ViewConnector() {
+    public val lifecyclePhase: Cell<ActivityLifecyclePhase> = StatefulCell(ActivityLifecyclePhase.IDLE)
+
+    internal fun createView(activity:Activity) {
+        viewFactory.value(ActivityViewFactoryVisitor(activity))
+    }
+}
+
+private class ActivityViewFactoryVisitor(activity:Activity) : ViewFactoryVisitor {
+    private val activity:Activity = activity
+
+    override fun setContentView(id: Int) {
+        activity.setContentView(id)
+    }
+
+    override fun setContentView(v: View) {
+        activity.setContentView(v)
+    }
+}
+
+public enum class ActivityLifecyclePhase { IDLE; CREATED; STARTED; RESUMED; }
+
 public abstract class ViewConnectorActivity : Activity() {
     public val connector: ActivityViewConnector by Delegates.lazy { createViewConnector() }
 
@@ -15,6 +34,8 @@ public abstract class ViewConnectorActivity : Activity() {
         super.onCreate(savedInstanceState)
         connector.context.value = this
         connector.lifecyclePhase.value = ActivityLifecyclePhase.CREATED
+        connector.buildScope()
+        connector.createView(this)
     }
 
     override fun onStart() {
@@ -45,5 +66,3 @@ public abstract class ViewConnectorActivity : Activity() {
 
     protected abstract fun createViewConnector(): ActivityViewConnector
 }
-
-public enum class ActivityLifecyclePhase { IDLE; CREATED; STARTED; RESUMED; }

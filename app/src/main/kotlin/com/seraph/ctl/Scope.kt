@@ -28,7 +28,7 @@ public class Scope(executor: Executor = ImmediateExecutor()) : TriggerListener<A
     synchronized public fun build() {
         buildLinks()
         sortLinks()
-        doAsync { update() }
+        update()
     }
 
     private fun buildLinks() {

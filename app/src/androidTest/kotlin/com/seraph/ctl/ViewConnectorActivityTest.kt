@@ -1,15 +1,13 @@
 package com.seraph.ctl
 
-import junit.framework.TestCase
-import android.content.Context
 import android.test.ActivityInstrumentationTestCase2
 import kotlin.test.assertTrue
 import android.test.UiThreadTest
 import kotlin.test.assertNotNull
 import kotlin.test.assertEquals
-import android.os.Bundle
-import android.widget.LinearLayout
 import com.seraph.ctl.ViewConnectorActivityTest.ViewConnectorTestActivity
+import android.view.View
+import android.widget.LinearLayout
 
 /**
  * CTL
@@ -46,9 +44,31 @@ public class ViewConnectorActivityTest :
         assertTrue(testActivity!!.connector.context.value == testActivity)
     }
 
+    UiThreadTest
+    public fun test_viewConnectorActivity_shouldGetContentViewFromViewConnector() {
+        assertNotNull(getActivity()?.view)
+    }
+
     public class ViewConnectorTestActivity : ViewConnectorActivity() {
+        internal var view: View? = null
+
         override fun createViewConnector(): ActivityViewConnector {
-            return ActivityViewConnector()
+            return TestActivityViewConnector()
+        }
+
+        override fun setContentView(view: View?) {
+            super.setContentView(view)
+            this.view = view
+        }
+    }
+
+    internal class TestActivityViewConnector : ActivityViewConnector() {
+        override fun onBuildScope(scope: Scope) {
+            scope.link(viewFactory).with(context) { context ->
+                { v ->
+                    v.setContentView(LinearLayout(context))
+                }
+            }
         }
     }
 }
