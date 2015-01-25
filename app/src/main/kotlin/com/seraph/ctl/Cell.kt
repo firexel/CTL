@@ -25,7 +25,7 @@ public abstract class Cell<T> : ScopeComponent {
         get() = listOf(trigger)
 }
 
-public class StatefulCell<T>(default: T) : Cell<T>() {
+public open class StatefulCell<T>(default: T) : Cell<T>() {
     var storedValue: T = default;
 
     synchronized override fun write(newValue: T) {
