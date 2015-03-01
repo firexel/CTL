@@ -8,17 +8,23 @@ import com.seraph.pipeline.Producer.NoDataException
  */
 
 public open class EventProducer<T> : ObservableProducer<T>() {
-    var armed = false
-    var storedEvent:T = null
+    public var armed: Boolean = false
+        private set
 
-    synchronized public open fun fire(event:T) {
+    var storedEvent: T = null
+
+    {
+        observe { read() }
+    }
+
+    synchronized public open fun fire(event: T) {
         armed = true
         storedEvent = event
         invokeObserver()
     }
 
     synchronized public override fun read(): T {
-        if(armed) {
+        if (armed) {
             val event = storedEvent
             armed = false
             storedEvent = null
