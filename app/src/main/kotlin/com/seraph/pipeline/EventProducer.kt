@@ -13,14 +13,12 @@ public open class EventProducer<T> : ObservableProducer<T>() {
 
     var storedEvent: T = null
 
-    {
-        observe { read() }
-    }
-
     synchronized public open fun fire(event: T) {
         armed = true
         storedEvent = event
-        invokeObserver()
+        if (!invokeObserver()) {
+            read()
+        }
     }
 
     synchronized public override fun read(): T {

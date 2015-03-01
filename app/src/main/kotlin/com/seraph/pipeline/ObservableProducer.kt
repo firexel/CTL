@@ -6,10 +6,11 @@ package com.seraph.pipeline
  */
 
 public abstract class ObservableProducer<T> : Producer<T> {
-    private var observer: () -> Unit = {}
+    private var observer: (() -> Unit)? = null
 
-    protected fun invokeObserver() {
-        observer.invoke()
+    synchronized protected fun invokeObserver(): Boolean {
+        observer?.invoke()
+        return observer != null
     }
 
     synchronized override fun observe(observer: () -> Unit) {
