@@ -33,10 +33,11 @@ public class CellChangeTrigger<T>(cell: Cell<T>) : Trigger<T>() {
 }
 
 public class OrTrigger<T>(vararg triggers: Trigger<*>) : Trigger<T>(), TriggerListener<Any?> {
-    {
+    private val triggers = triggers;
+
+    init {
         triggers.forEach { it.addListener(this) }
     }
-    private val triggers = triggers;
 
     override var isArmed: Boolean
         get() {

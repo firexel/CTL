@@ -8,7 +8,8 @@ package com.seraph.pipeline
 public open class MappingProducer<I, O>(producer: Producer<I>, transformation: (I) -> O) : ObservableProducer<O>() {
     private val wrappedProducer = producer
     private val transformation = transformation
-    {
+
+    init {
         wrappedProducer.observe { invokeObserver() }
     }
 

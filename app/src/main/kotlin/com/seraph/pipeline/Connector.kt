@@ -5,7 +5,8 @@ package com.seraph.pipeline
  * Created by seraph on 02.03.2015 0:37.
  */
 public open class Connector<T>(producer: Producer<T>, consumer: Consumer<T>) {
-    {
+
+    init {
         performTransfer(consumer, producer)
         producer.observe { performTransfer(consumer, producer) }
     }

@@ -39,7 +39,7 @@ public class ScopeTest : TestCase() {
     }
 
     public fun test_scope_shouldUpdateCellsInTopologicalOrderInOnePass() {
-        val cells = Array(3) {(i) -> StatefulCell("") }
+        val cells = Array(3) { i -> StatefulCell("") }
         scope = Scope(DegenerateExecutor())
         scope.link(cells[2]).with(cells[1])
         scope.link(cells[1]).with(cells[0])
@@ -76,7 +76,7 @@ public class ScopeTest : TestCase() {
         val src1 = StatefulCell("")
         val src2 = StatefulCell("")
         val dst = StatefulCell("")
-        scope.link(dst).with(src1, src2) {(s1, s2) -> s1 + s2 }
+        scope.link(dst).with(src1, src2) { s1, s2 -> s1 + s2 }
         scope.build()
         src1.value = "a"
         src2.value = "b"
@@ -88,7 +88,7 @@ public class ScopeTest : TestCase() {
         val src2 = StatefulCell("")
         val src3 = StatefulCell("")
         val dst = StatefulCell("")
-        scope.link(dst).with(src1, src2, src3) {(s1, s2, s3) -> s1 + s2 + s3 }
+        scope.link(dst).with(src1, src2, src3) { s1, s2, s3 -> s1 + s2 + s3 }
         scope.build()
         src1.value = "a"
         src2.value = "b"
@@ -102,7 +102,7 @@ public class ScopeTest : TestCase() {
         val src3 = StatefulCell("")
         val src4 = StatefulCell("")
         val dst = StatefulCell("")
-        scope.link(dst).with(src1, src2, src3, src4) {(s1, s2, s3, s4) -> s1 + s2 + s3 + s4 }
+        scope.link(dst).with(src1, src2, src3, src4) { s1, s2, s3, s4 -> s1 + s2 + s3 + s4 }
         scope.build()
         src1.value = "a"
         src2.value = "b"
@@ -118,7 +118,7 @@ public class ScopeTest : TestCase() {
         val src4 = StatefulCell("")
         val src5 = StatefulCell("")
         val dst = StatefulCell("")
-        scope.link(dst).with(src1, src2, src3, src4, src5) {(s1, s2, s3, s4, s5) -> s1 + s2 + s3 + s4 + s5 }
+        scope.link(dst).with(src1, src2, src3, src4, src5) { s1, s2, s3, s4, s5 -> s1 + s2 + s3 + s4 + s5 }
         scope.build()
         src1.value = "a"
         src2.value = "b"

@@ -96,8 +96,8 @@ public class Scope(executor: Executor = ImmediateExecutor()) : TriggerListener<A
     }
 
     synchronized public fun update() {
-        links.forEach {(link) -> if (link.isTransferNeeded) link.transfer() }
-        links.forEach {(link) -> link.transferTrigger.disarm() }
+        links.forEach { link -> if (link.isTransferNeeded) link.transfer() }
+        links.forEach { link -> link.transferTrigger.disarm() }
     }
 
     public class LinkBuilder<T>(dstCell: Cell<T>) {

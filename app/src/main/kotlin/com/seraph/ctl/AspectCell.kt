@@ -6,9 +6,9 @@ package com.seraph.ctl
  */
 
 public abstract class AspectCell<ET, AT>(default:AT, cell:Cell<ET>) : StatefulCell<AT>(default), TriggerListener<ET> {
-    private val entityCell = cell;
+    private val entityCell = cell
 
-    /* constructor */ {
+    init {
         writeToEntity(cell.value, value)
         cell.trigger.addListener(this)
     }
