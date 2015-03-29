@@ -1,7 +1,7 @@
-package com.seraph.pipeline
+package com.seraph.luigi
 
 /**
- * CTL
+ * Luigi
  * Created by seraph on 22.02.2015 23:21.
  */
 

@@ -1,7 +1,7 @@
-package com.seraph.pipeline
+package com.seraph.luigi
 
 /**
- * CTL
+ * Luigi
  * Created by seraph on 02.03.2015 0:37.
  */
 public open class Connector<T>(producer: Producer<T>, consumer: Consumer<T>) {

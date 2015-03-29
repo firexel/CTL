@@ -1,11 +1,11 @@
-package com.seraph.pipeline
+package com.seraph.luigi
 
 import junit.framework.TestCase
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * CTL
+ * Luigi
  * Created by seraph on 23.02.2015 0:34.
  */
 

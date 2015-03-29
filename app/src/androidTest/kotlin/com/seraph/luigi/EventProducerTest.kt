@@ -1,4 +1,4 @@
-package com.seraph.pipeline
+package com.seraph.luigi
 
 import junit.framework.TestCase
 import kotlin.test.assertTrue
@@ -7,7 +7,7 @@ import kotlin.test.fail
 import kotlin.test.assertFalse
 
 /**
- * CTL
+ * Luigi
  * Created by seraph on 23.02.2015 0:07.
  */
 

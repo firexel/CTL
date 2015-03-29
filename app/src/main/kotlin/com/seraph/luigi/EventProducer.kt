@@ -1,9 +1,9 @@
-package com.seraph.pipeline
+package com.seraph.luigi
 
-import com.seraph.pipeline.Producer.NoDataException
+import com.seraph.luigi.Producer.NoDataException
 
 /**
- * CTL
+ * Luigi
  * Created by seraph on 23.02.2015 0:09.
  */
 
