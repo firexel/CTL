@@ -32,6 +32,12 @@ public abstract class BaseConsumer<T> : Consumer<T> {
     }
 }
 
+fun <T, P:Producer<T>, C:Consumer<T>> P.sinkTo(consumer: C):C {
+    this bindConsumer consumer
+    consumer bindProducer this
+    return consumer
+}
+
 public abstract class BaseProducer<T> : Producer<T> {
     synchronized protected var consumer: Consumer<T>? = null
         private set

@@ -9,6 +9,25 @@ import kotlin.test.assertEquals
  */
 
 public class BaseTest : TestCase() {
+    public fun test_sinkToExtension() {
+        val producer = TestBaseProducer<String>()
+        val consumerProducer = TestBaseConsumerProducer<String, Int>()
+        val consumer = TestBaseConsumer<Int>()
+
+        // preconditions
+        producer.assertConsumerEquals(null)
+        consumer.assertProducerEquals(null)
+
+        // action
+        producer sinkTo consumerProducer sinkTo consumer
+
+        // effect
+        producer.assertConsumerEquals(consumerProducer)
+        consumerProducer.assertProducerEquals(producer)
+        consumerProducer.assertConsumerEquals(consumer)
+        consumer.assertProducerEquals(consumerProducer)
+    }
+
     public fun test_baseConsumer_basics() {
         performConsumerBaseTest(TestBaseConsumer<String>())
     }
@@ -63,7 +82,7 @@ public class BaseTest : TestCase() {
 
 private trait TestConsumer<T> : Consumer<T> {
     public fun assertProducerEquals(producer: Producer<T>?)
-    public fun assertProducer(predicate:(Producer<T>?) -> Boolean)
+    public fun assertProducer(predicate: (Producer<T>?) -> Boolean)
 }
 
 private trait TestProducer<T> : Producer<T> {
