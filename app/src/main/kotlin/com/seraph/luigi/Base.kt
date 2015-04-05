@@ -6,14 +6,14 @@ package com.seraph.luigi
  */
 
 public trait Consumer<in T> {
-    fun ignore(producer: Producer<T>)
-    fun observe(producer: Producer<T>)
+    fun ignoreProducer(producer: Producer<T>)
+    fun bindProducer(producer: Producer<T>)
     fun requestRead()
 }
 
 public trait Producer<out T> {
-    fun sinkTo(consumer: Consumer<T>)
-    fun ignore(consumer: Consumer<T>)
+    fun bindConsumer(consumer: Consumer<T>)
+    fun ignoreConsumer(consumer: Consumer<T>)
     fun read():T
 }
 
@@ -21,11 +21,11 @@ public abstract class BaseConsumer<T> : Consumer<T> {
     synchronized protected var producer: Producer<T>? = null
         private set
 
-    synchronized override fun observe(producer: Producer<T>) {
+    synchronized override fun bindProducer(producer: Producer<T>) {
         this.producer = producer
     }
 
-    synchronized override fun ignore(producer: Producer<T>) {
+    synchronized override fun ignoreProducer(producer: Producer<T>) {
         if (this.producer == producer) {
             this.producer = null
         }
@@ -36,15 +36,15 @@ public abstract class BaseProducer<T> : Producer<T> {
     synchronized protected var consumer: Consumer<T>? = null
         private set
 
-    synchronized override fun sinkTo(consumer: Consumer<T>) {
+    synchronized override fun bindConsumer(consumer: Consumer<T>) {
         this.consumer = consumer
-        consumer.observe(this)
+        consumer.bindProducer(this)
     }
 
-    synchronized override fun ignore(consumer: Consumer<T>) {
+    synchronized override fun ignoreConsumer(consumer: Consumer<T>) {
         if (this.consumer == consumer) {
             this.consumer = null
-            consumer.ignore(this)
+            consumer.ignoreProducer(this)
         }
     }
 }
@@ -56,25 +56,25 @@ public abstract class BaseConsumerProducer<I, O> : Consumer<I>, Producer<O> {
     synchronized protected var consumer: Consumer<O>? = null
         private set
 
-    synchronized override fun observe(producer: Producer<I>) {
+    synchronized override fun bindProducer(producer: Producer<I>) {
         this.producer = producer
     }
 
-    synchronized override fun ignore(producer: Producer<I>) {
+    synchronized override fun ignoreProducer(producer: Producer<I>) {
         if (this.producer == producer) {
             this.producer = null
         }
     }
 
-    synchronized override fun sinkTo(consumer: Consumer<O>) {
+    synchronized override fun bindConsumer(consumer: Consumer<O>) {
         this.consumer = consumer
-        consumer.observe(this)
+        consumer.bindProducer(this)
     }
 
-    synchronized override fun ignore(consumer: Consumer<O>) {
+    synchronized override fun ignoreConsumer(consumer: Consumer<O>) {
         if (this.consumer == consumer) {
             this.consumer = null
-            consumer.ignore(this)
+            consumer.ignoreProducer(this)
         }
     }
 }

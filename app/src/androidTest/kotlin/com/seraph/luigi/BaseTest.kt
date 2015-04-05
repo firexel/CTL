@@ -31,13 +31,13 @@ public class BaseTest : TestCase() {
         consumer.assertProducerEquals(null)
 
         // actions
-        consumer.observe(producer1)
+        consumer.bindProducer(producer1)
         consumer.assertProducerEquals(producer1)
 
-        consumer.ignore(producer2)
+        consumer.ignoreProducer(producer2)
         consumer.assertProducerEquals(producer1)
 
-        consumer.ignore(producer1)
+        consumer.ignoreProducer(producer1)
         consumer.assertProducerEquals(null)
     }
 
@@ -48,25 +48,22 @@ public class BaseTest : TestCase() {
         // preconditions
         assert(producer is Producer<*>)
         producer.assertConsumerEquals(null)
-        consumer1.assertProducerEquals(null)
 
         // actions
-        producer.sinkTo(consumer1)
+        producer.bindConsumer(consumer1)
         producer.assertConsumerEquals(consumer1)
-        consumer1.assertProducerEquals(producer)
 
-        producer.ignore(consumer2)
+        producer.ignoreConsumer(consumer2)
         producer.assertConsumerEquals(consumer1)
-        consumer1.assertProducerEquals(producer)
 
-        producer.ignore(consumer1)
+        producer.ignoreConsumer(consumer1)
         producer.assertConsumerEquals(null)
-        consumer1.assertProducerEquals(null)
     }
 }
 
 private trait TestConsumer<T> : Consumer<T> {
     public fun assertProducerEquals(producer: Producer<T>?)
+    public fun assertProducer(predicate:(Producer<T>?) -> Boolean)
 }
 
 private trait TestProducer<T> : Producer<T> {
@@ -80,6 +77,10 @@ private class TestBaseConsumer<T> : BaseConsumer<T>(), TestConsumer<T> {
 
     public override fun assertProducerEquals(producer: Producer<T>?) {
         assertEquals(producer, this.producer)
+    }
+
+    override fun assertProducer(predicate: (Producer<T>?) -> Boolean) {
+        assert(predicate(this.producer))
     }
 }
 
@@ -104,6 +105,10 @@ private class TestBaseConsumerProducer<I, O> : BaseConsumerProducer<I, O>(), Tes
 
     override fun assertProducerEquals(producer: Producer<I>?) {
         assertEquals(producer, this.producer)
+    }
+
+    override fun assertProducer(predicate: (Producer<I>?) -> Boolean) {
+        assert(predicate(this.producer))
     }
 
     override fun assertConsumerEquals(consumer: Consumer<O>?) {
