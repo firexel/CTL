@@ -42,22 +42,26 @@ public class BaseTest : TestCase() {
     }
 
     private fun performProducerBaseTest(producer: TestProducer<String>) {
-        val consumer1: Consumer<String> = TestBaseConsumer()
-        val consumer2: Consumer<String> = TestBaseConsumer()
+        val consumer1 = TestBaseConsumer<String>()
+        val consumer2 = TestBaseConsumer<String>()
 
         // preconditions
         assert(producer is Producer<*>)
         producer.assertConsumerEquals(null)
+        consumer1.assertProducerEquals(null)
 
         // actions
         producer.sinkTo(consumer1)
         producer.assertConsumerEquals(consumer1)
+        consumer1.assertProducerEquals(producer)
 
         producer.ignore(consumer2)
         producer.assertConsumerEquals(consumer1)
+        consumer1.assertProducerEquals(producer)
 
         producer.ignore(consumer1)
         producer.assertConsumerEquals(null)
+        consumer1.assertProducerEquals(null)
     }
 }
 

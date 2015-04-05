@@ -38,11 +38,13 @@ public abstract class BaseProducer<T> : Producer<T> {
 
     synchronized override fun sinkTo(consumer: Consumer<T>) {
         this.consumer = consumer
+        consumer.observe(this)
     }
 
     synchronized override fun ignore(consumer: Consumer<T>) {
         if (this.consumer == consumer) {
             this.consumer = null
+            consumer.ignore(this)
         }
     }
 }
@@ -66,11 +68,13 @@ public abstract class BaseConsumerProducer<I, O> : Consumer<I>, Producer<O> {
 
     synchronized override fun sinkTo(consumer: Consumer<O>) {
         this.consumer = consumer
+        consumer.observe(this)
     }
 
     synchronized override fun ignore(consumer: Consumer<O>) {
         if (this.consumer == consumer) {
             this.consumer = null
+            consumer.ignore(this)
         }
     }
 }
