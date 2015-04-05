@@ -71,7 +71,7 @@ private trait TestProducer<T> : Producer<T> {
 
 private class TestBaseConsumer<T> : BaseConsumer<T>(), TestConsumer<T> {
     override fun requestRead() {
-        // do nothing
+        throw UnsupportedOperationException()
     }
 
     public override fun assertProducerEquals(producer: Producer<T>?) {
