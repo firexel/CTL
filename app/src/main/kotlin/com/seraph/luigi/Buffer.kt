@@ -25,5 +25,6 @@ public class Buffer<T>(initialValue: T = null) : BaseConsumerProducer<T, T>() {
 
     synchronized override fun requestRead() {
         dirty = true
+        consumer?.requestRead()
     }
 }

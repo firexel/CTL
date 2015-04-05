@@ -14,6 +14,6 @@ public class ConstantProducer<T>(value:T) : BaseProducer<T>() {
 }
 
 fun <T, C:Consumer<T>> T.bindTo(consumer: C):C {
-    ConstantProducer(this) bindConsumer consumer
+    ConstantProducer(this) sinkTo consumer
     return consumer
 }

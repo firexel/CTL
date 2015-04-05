@@ -44,13 +44,11 @@ public abstract class BaseProducer<T> : Producer<T> {
 
     synchronized override fun bindConsumer(consumer: Consumer<T>) {
         this.consumer = consumer
-        consumer.bindProducer(this)
     }
 
     synchronized override fun ignoreConsumer(consumer: Consumer<T>) {
         if (this.consumer == consumer) {
             this.consumer = null
-            consumer.ignoreProducer(this)
         }
     }
 }
@@ -74,13 +72,11 @@ public abstract class BaseConsumerProducer<I, O> : Consumer<I>, Producer<O> {
 
     synchronized override fun bindConsumer(consumer: Consumer<O>) {
         this.consumer = consumer
-        consumer.bindProducer(this)
     }
 
     synchronized override fun ignoreConsumer(consumer: Consumer<O>) {
         if (this.consumer == consumer) {
             this.consumer = null
-            consumer.ignoreProducer(this)
         }
     }
 }
