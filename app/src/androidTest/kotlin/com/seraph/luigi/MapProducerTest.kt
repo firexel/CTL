@@ -114,4 +114,28 @@ public class MapProducerTest : TestCase() {
         // effect
         assertEquals("Small step for man", dst.read()) // but huge leap for mankind
     }
+
+    private data class Building(
+            val name: String,
+            val floors: Int,
+            val area: Double,
+            val country: String,
+            val materials: Set<String>) {}
+
+    public fun test_mapProducer_for5Sources() {
+        val name = Buffer("Burj Khalifa")
+        val floors = Buffer(163)
+        val area = Buffer(309473.5)
+        val country = Buffer("UAE")
+        val materials = Buffer(setOf("steel", "glass", "concrete"))
+
+        // action
+        val building = name and floors and area and country and materials map ::Building
+
+        // effect
+        assertEquals(
+                Building("Burj Khalifa", 163, 309473.5, "UAE", setOf("steel", "glass", "concrete")),
+                building.read()
+        )
+    }
 }

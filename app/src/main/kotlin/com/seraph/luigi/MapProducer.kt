@@ -65,5 +65,21 @@ public class ProducerTupleOf4<I1, I2, I3, I4>(p1: Producer<I1>, p2: Producer<I2>
     public fun <O> map(converter: (I1, I2, I3, I4) -> O): Producer<O> {
         return MapProducer(listOf(p1, p2, p3, p4)) { converter(p1.read(), p2.read(), p3.read(), p4.read()) }
     }
+
+    public fun <I5> and(p5: Producer<I5>): ProducerTupleOf5<I1, I2, I3, I4, I5> {
+        return ProducerTupleOf5(p1, p2, p3, p4, p5)
+    }
+}
+
+public class ProducerTupleOf5<I1, I2, I3, I4, I5>(p1: Producer<I1>, p2: Producer<I2>, p3: Producer<I3>, p4: Producer<I4>, p5: Producer<I5>) {
+    private val p1 = p1;
+    private val p2 = p2;
+    private val p3 = p3;
+    private val p4 = p4;
+    private val p5 = p5;
+
+    public fun <O> map(converter: (I1, I2, I3, I4, I5) -> O): Producer<O> {
+        return MapProducer(listOf(p1, p2, p3, p4, p5)) { converter(p1.read(), p2.read(), p3.read(), p4.read(), p5.read()) }
+    }
 }
 
