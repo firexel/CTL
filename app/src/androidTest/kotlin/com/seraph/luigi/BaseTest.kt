@@ -2,6 +2,7 @@ package com.seraph.luigi
 
 import junit.framework.TestCase
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Luigi
@@ -46,7 +47,7 @@ public class BaseTest : TestCase() {
         val producer2: Producer<String> = TestBaseProducer()
 
         // preconditions
-        assert(consumer is Consumer<*>)
+        assertTrue(consumer is Consumer<*>)
         consumer.assertProducerEquals(null)
 
         // actions
@@ -65,7 +66,7 @@ public class BaseTest : TestCase() {
         val consumer2 = TestBaseConsumer<String>()
 
         // preconditions
-        assert(producer is Producer<*>)
+        assertTrue(producer is Producer<*>)
         producer.assertConsumerEquals(null)
 
         // actions
@@ -89,7 +90,7 @@ private trait TestProducer<T> : Producer<T> {
     public fun assertConsumerEquals(consumer: Consumer<T>?)
 }
 
-private class TestBaseConsumer<T> : BaseConsumer<T>(), TestConsumer<T> {
+private open class TestBaseConsumer<T> : BaseConsumer<T>(), TestConsumer<T> {
     override fun requestRead() {
         throw UnsupportedOperationException()
     }
@@ -99,11 +100,11 @@ private class TestBaseConsumer<T> : BaseConsumer<T>(), TestConsumer<T> {
     }
 
     override fun assertProducer(predicate: (Producer<T>?) -> Boolean) {
-        assert(predicate(this.producer))
+        assertTrue(predicate(this.producer))
     }
 }
 
-private class TestBaseProducer<T> : BaseProducer<T>(), TestProducer<T> {
+private open class TestBaseProducer<T> : BaseProducer<T>(), TestProducer<T> {
     override fun read(): T {
         throw UnsupportedOperationException()
     }
@@ -113,7 +114,7 @@ private class TestBaseProducer<T> : BaseProducer<T>(), TestProducer<T> {
     }
 }
 
-private class TestBaseConsumerProducer<I, O> : BaseConsumerProducer<I, O>(), TestConsumer<I>, TestProducer<O> {
+private open class TestBaseConsumerProducer<I, O> : BaseConsumerProducer<I, O>(), TestConsumer<I>, TestProducer<O> {
     override fun read(): O {
         throw UnsupportedOperationException()
     }
@@ -127,7 +128,7 @@ private class TestBaseConsumerProducer<I, O> : BaseConsumerProducer<I, O>(), Tes
     }
 
     override fun assertProducer(predicate: (Producer<I>?) -> Boolean) {
-        assert(predicate(this.producer))
+        assertTrue(predicate(this.producer))
     }
 
     override fun assertConsumerEquals(consumer: Consumer<O>?) {

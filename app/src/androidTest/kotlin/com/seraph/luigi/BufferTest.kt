@@ -2,6 +2,7 @@ package com.seraph.luigi
 
 import junit.framework.TestCase
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Luigi
@@ -16,8 +17,8 @@ public class BufferTest : TestCase() {
 
         // preconditions
         assertEquals(5, buffer.read())
-        assert(buffer is Consumer<Int>)
-        assert(buffer is Producer<Int>)
+        assertTrue(buffer is Consumer<Int>)
+        assertTrue(buffer is Producer<Int>)
         assertEquals(null, producer.value)
         assertEquals(0, producer.readCount)
         assertEquals(null, consumer.value)
@@ -55,7 +56,7 @@ public class BufferTest : TestCase() {
     }
 }
 
-private class CountingTestProducer<T> : BaseProducer<T>() {
+private open class CountingTestProducer<T> : BaseProducer<T>() {
     public var readCount: Int = 0
     public var value: T = null
 
@@ -65,7 +66,7 @@ private class CountingTestProducer<T> : BaseProducer<T>() {
     }
 }
 
-private class CountingTestConsumer<T> : BaseConsumer<T>() {
+private open class CountingTestConsumer<T> : BaseConsumer<T>() {
     public var requestReadCount: Int = 0
     public var value: T = null
 
