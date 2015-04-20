@@ -64,6 +64,10 @@ private open class CountingTestProducer<T> : BaseProducer<T>() {
         readCount++
         return value
     }
+
+    fun emitReadRequest() {
+        consumer?.requestRead()
+    }
 }
 
 private open class CountingTestConsumer<T> : BaseConsumer<T>() {
