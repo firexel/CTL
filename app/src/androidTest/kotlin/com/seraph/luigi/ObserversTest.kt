@@ -44,5 +44,45 @@ public class ObserversTest : TestCase() {
 
         assertEquals(3, producer.readCount)
     }
+
+    public fun test_dataTransferObserver_new() {
+        val producer = CountingTestProducer<String>()
+        val consumer = ManualTestConsumer<String>()
+
+        assertEquals(0, producer.readCount)
+        assertEquals(0, consumer.requestReadCount)
+
+        // action
+        var observedData = ""
+        producer observeTransfer { observedData = it } sinkTo consumer
+        producer.value = "a"
+        producer.emitReadRequest()
+
+        // effect
+        assertEquals(0, producer.readCount)
+        assertEquals(1, consumer.requestReadCount)
+        assertEquals("", observedData)
+
+        // action
+        consumer.performRead()
+
+        // effect
+        assertEquals(1, producer.readCount)
+        assertEquals("a", consumer.value)
+        assertEquals("a", observedData)
+    }
+
+    private open class ManualTestConsumer<T> : BaseConsumer<T>() {
+        public var requestReadCount: Int = 0
+        public var value: T = null
+
+        override fun requestRead() {
+            requestReadCount++
+        }
+
+        public fun performRead() {
+            value = producer!!.read()
+        }
+    }
 }
 

@@ -26,3 +26,19 @@ public class DataObserver <T>(val observer: (T) -> Unit) : BaseConsumer<T>() {
         }
     }
 }
+
+public fun <O, P : Producer<O>> P.observeTransfer(observer: (O) -> Unit): Producer<O> {
+    return this sinkTo DataTransferObserver(observer)
+}
+
+public class DataTransferObserver<O>(val observer: (O) -> Unit) : BaseConsumerProducer<O, O>() {
+    override fun requestRead() {
+        consumer?.requestRead()
+    }
+
+    override fun read(): O {
+        val data = producer!!.read()
+        observer.invoke(data)
+        return data
+    }
+}
