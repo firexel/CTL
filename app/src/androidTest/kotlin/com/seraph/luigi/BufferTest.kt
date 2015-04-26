@@ -32,6 +32,7 @@ public class BufferTest : TestCase() {
 
         // action
         producer.value = 7
+        buffer.unbindProducer()
         producer sinkTo buffer sinkTo consumer
 
         // effect

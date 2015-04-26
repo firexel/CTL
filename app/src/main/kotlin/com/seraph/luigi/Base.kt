@@ -14,7 +14,13 @@ public trait Consumer<T> {
 public trait Producer<T> {
     fun bindConsumer(consumer: Consumer<T>)
     fun unbindConsumer(): Consumer<T>?
-    fun read():T
+    fun read(): T
+}
+
+fun <T, P : Producer<T>, C : Consumer<T>> P.sinkTo(consumer: C): C {
+    this bindConsumer consumer
+    consumer bindProducer this
+    return consumer
 }
 
 public abstract class BaseConsumer<T> : Consumer<T> {
@@ -22,6 +28,7 @@ public abstract class BaseConsumer<T> : Consumer<T> {
         private set
 
     synchronized override fun bindProducer(producer: Producer<T>) {
+        checkNotBound(this.producer, producer)
         this.producer = producer
     }
 
@@ -32,17 +39,12 @@ public abstract class BaseConsumer<T> : Consumer<T> {
     }
 }
 
-fun <T, P:Producer<T>, C:Consumer<T>> P.sinkTo(consumer: C):C {
-    this bindConsumer consumer
-    consumer bindProducer this
-    return consumer
-}
-
 public abstract class BaseProducer<T> : Producer<T> {
     synchronized protected var consumer: Consumer<T>? = null
         private set
 
     synchronized override fun bindConsumer(consumer: Consumer<T>) {
+        checkNotBound(this.consumer, consumer)
         this.consumer = consumer
     }
 
@@ -61,6 +63,7 @@ public abstract class BaseConsumerProducer<I, O> : Consumer<I>, Producer<O> {
         private set
 
     synchronized override fun bindProducer(producer: Producer<I>) {
+        checkNotBound(this.producer, producer)
         this.producer = producer
     }
 
@@ -71,6 +74,7 @@ public abstract class BaseConsumerProducer<I, O> : Consumer<I>, Producer<O> {
     }
 
     synchronized override fun bindConsumer(consumer: Consumer<O>) {
+        checkNotBound(this.consumer, consumer)
         this.consumer = consumer
     }
 
@@ -81,3 +85,10 @@ public abstract class BaseConsumerProducer<I, O> : Consumer<I>, Producer<O> {
     }
 }
 
+private fun Any.checkNotBound(oldFieldValue: Any?, newFieldValue: Any) {
+    if (oldFieldValue != null && oldFieldValue != newFieldValue) {
+        throw AlreadyBeingBoundException("$this already being bound with ${oldFieldValue}")
+    }
+}
+
+public class AlreadyBeingBoundException(message: String) : RuntimeException(message)

@@ -3,6 +3,7 @@ package com.seraph.luigi
 import junit.framework.TestCase
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.failsWith
 
 /**
  * Luigi
@@ -53,8 +54,12 @@ public class BaseTest : TestCase() {
         consumer.bindProducer(producer1)
         consumer.assertProducerEquals(producer1)
 
-        consumer.unbindProducer()
+        failsWith(javaClass<AlreadyBeingBoundException>(), { consumer.bindProducer(TestBaseProducer()) })
+
+        assertEquals(producer1, consumer.unbindProducer())
         consumer.assertProducerEquals(null)
+
+        assertEquals(null, consumer.unbindProducer())
     }
 
     private fun performProducerBaseTest(producer: TestProducer<String>) {
@@ -68,8 +73,12 @@ public class BaseTest : TestCase() {
         producer.bindConsumer(consumer1)
         producer.assertConsumerEquals(consumer1)
 
-        producer.unbindConsumer()
+        failsWith(javaClass<AlreadyBeingBoundException>(), { producer.bindConsumer(TestBaseConsumer()) })
+
+        assertEquals(consumer1, producer.unbindConsumer())
         producer.assertConsumerEquals(null)
+
+        assertEquals(null, producer.unbindConsumer())
     }
 }
 
