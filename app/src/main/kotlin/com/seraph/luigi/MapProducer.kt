@@ -5,12 +5,13 @@ package com.seraph.luigi
  * Created by Alexander Naumov on 08.04.2015.
  */
 
-public class MapProducer<O>(producers: List<Producer<Any?>>, readDelegate: () -> O) : BaseProducer<O>() {
+public class MapProducer<O>(producers: List<Producer<*>>, readDelegate: () -> O) : BaseProducer<O>() {
     private val readDelegate: () -> O = readDelegate;
 
     init {
         for (producer in producers) {
-            producer sinkTo NotifierConsumer<Any?>()
+            [suppress("UNCHECKED_CAST")]
+            ((producer as Producer<Any?>) sinkTo NotifierConsumer<Any?>())
         }
     }
 

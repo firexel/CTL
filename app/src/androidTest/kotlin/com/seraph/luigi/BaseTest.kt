@@ -44,7 +44,6 @@ public class BaseTest : TestCase() {
 
     private fun performConsumerBaseTest(consumer: TestConsumer<String>) {
         val producer1: Producer<String> = TestBaseProducer()
-        val producer2: Producer<String> = TestBaseProducer()
 
         // preconditions
         assertTrue(consumer is Consumer<*>)
@@ -54,16 +53,12 @@ public class BaseTest : TestCase() {
         consumer.bindProducer(producer1)
         consumer.assertProducerEquals(producer1)
 
-        consumer.ignoreProducer(producer2)
-        consumer.assertProducerEquals(producer1)
-
-        consumer.ignoreProducer(producer1)
+        consumer.unbindProducer()
         consumer.assertProducerEquals(null)
     }
 
     private fun performProducerBaseTest(producer: TestProducer<String>) {
         val consumer1 = TestBaseConsumer<String>()
-        val consumer2 = TestBaseConsumer<String>()
 
         // preconditions
         assertTrue(producer is Producer<*>)
@@ -73,10 +68,7 @@ public class BaseTest : TestCase() {
         producer.bindConsumer(consumer1)
         producer.assertConsumerEquals(consumer1)
 
-        producer.ignoreConsumer(consumer2)
-        producer.assertConsumerEquals(consumer1)
-
-        producer.ignoreConsumer(consumer1)
+        producer.unbindConsumer()
         producer.assertConsumerEquals(null)
     }
 }

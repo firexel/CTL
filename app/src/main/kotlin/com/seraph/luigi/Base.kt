@@ -5,15 +5,15 @@ package com.seraph.luigi
  * Created by Alexander Naumov on 05.04.2015.
  */
 
-public trait Consumer<in T> {
-    fun ignoreProducer(producer: Producer<T>)
+public trait Consumer<T> {
     fun bindProducer(producer: Producer<T>)
+    fun unbindProducer(): Producer<T>?
     fun requestRead()
 }
 
-public trait Producer<out T> {
+public trait Producer<T> {
     fun bindConsumer(consumer: Consumer<T>)
-    fun ignoreConsumer(consumer: Consumer<T>)
+    fun unbindConsumer(): Consumer<T>?
     fun read():T
 }
 
@@ -25,10 +25,10 @@ public abstract class BaseConsumer<T> : Consumer<T> {
         this.producer = producer
     }
 
-    synchronized override fun ignoreProducer(producer: Producer<T>) {
-        if (this.producer == producer) {
-            this.producer = null
-        }
+    synchronized override fun unbindProducer(): Producer<T>? {
+        val producer = this.producer
+        this.producer = null
+        return producer
     }
 }
 
@@ -46,10 +46,10 @@ public abstract class BaseProducer<T> : Producer<T> {
         this.consumer = consumer
     }
 
-    synchronized override fun ignoreConsumer(consumer: Consumer<T>) {
-        if (this.consumer == consumer) {
-            this.consumer = null
-        }
+    synchronized override fun unbindConsumer(): Consumer<T>? {
+        val consumer = this.consumer
+        this.consumer = null
+        return consumer
     }
 }
 
@@ -64,20 +64,20 @@ public abstract class BaseConsumerProducer<I, O> : Consumer<I>, Producer<O> {
         this.producer = producer
     }
 
-    synchronized override fun ignoreProducer(producer: Producer<I>) {
-        if (this.producer == producer) {
-            this.producer = null
-        }
+    synchronized override fun unbindProducer(): Producer<I>? {
+        val producer = this.producer
+        this.producer = null
+        return producer
     }
 
     synchronized override fun bindConsumer(consumer: Consumer<O>) {
         this.consumer = consumer
     }
 
-    synchronized override fun ignoreConsumer(consumer: Consumer<O>) {
-        if (this.consumer == consumer) {
-            this.consumer = null
-        }
+    synchronized override fun unbindConsumer(): Consumer<O>? {
+        val consumer = this.consumer
+        this.consumer = null
+        return consumer
     }
 }
 
