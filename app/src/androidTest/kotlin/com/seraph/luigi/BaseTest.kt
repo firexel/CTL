@@ -92,7 +92,7 @@ private trait TestProducer<T> : Producer<T> {
 }
 
 private open class TestBaseConsumer<T> : BaseConsumer<T>(), TestConsumer<T> {
-    override fun requestRead() {
+    override fun requestRead(): Boolean {
         throw UnsupportedOperationException()
     }
 
@@ -120,7 +120,7 @@ private open class TestBaseConsumerProducer<I, O> : BaseConsumerProducer<I, O>()
         throw UnsupportedOperationException()
     }
 
-    override fun requestRead() {
+    override fun requestRead(): Boolean {
         throw UnsupportedOperationException()
     }
 

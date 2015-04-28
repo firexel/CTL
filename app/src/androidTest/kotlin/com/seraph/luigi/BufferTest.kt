@@ -80,8 +80,9 @@ private open class CountingTestConsumer<T> : BaseConsumer<T>() {
         requestRead()
     }
 
-    override fun requestRead() {
+    override fun requestRead(): Boolean {
         requestReadCount++
         value = producer!!.read()
+        return true
     }
 }

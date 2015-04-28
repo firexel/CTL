@@ -46,11 +46,11 @@ public class AsyncProducer<T>(
     }
 
     private inner class NotifierConsumer<T> : BaseConsumer<T>() {
-        override fun requestRead() {
+        override fun requestRead(): Boolean {
             synchronized(this@AsyncProducer) {
                 dirty = true
             }
-            executor.exec { consumer?.requestRead() }
+            return consumer != null && consumer!!.requestRead()
         }
     }
 }

@@ -8,7 +8,7 @@ package com.seraph.luigi
 public trait Consumer<T> {
     fun bindProducer(producer: Producer<T>)
     fun unbindProducer(): Producer<T>?
-    fun requestRead()
+    fun requestRead(): Boolean
 }
 
 public trait Producer<T> {

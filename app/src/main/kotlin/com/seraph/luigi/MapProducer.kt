@@ -18,7 +18,7 @@ public class MapProducer<O>(producers: List<Producer<*>>, readDelegate: () -> O)
     override fun read(): O = readDelegate()
 
     private inner class NotifierConsumer<T> : BaseConsumer<T>() {
-        override fun requestRead() = consumer?.requestRead()
+        override fun requestRead() = consumer != null && consumer!!.requestRead()
     }
 }
 

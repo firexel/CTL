@@ -23,8 +23,8 @@ public class Buffer<T>(initialValue: T = null) : BaseConsumerProducer<T, T>() {
         return value
     }
 
-    synchronized override fun requestRead() {
+    synchronized override fun requestRead(): Boolean {
         dirty = true
-        consumer?.requestRead()
+        return consumer != null && consumer!!.requestRead()
     }
 }

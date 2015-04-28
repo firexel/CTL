@@ -31,8 +31,8 @@ public class ObserversTest : TestCase() {
         val producer = CountingTestProducer<String>()
         assertEquals(0, producer.readCount)
 
-        var observedData:String = ""
-        producer observeData { data:String ->
+        var observedData: String = ""
+        producer observeData { data: String ->
             observedData = data
         }
 
@@ -76,8 +76,9 @@ public class ObserversTest : TestCase() {
         public var requestReadCount: Int = 0
         public var value: T = null
 
-        override fun requestRead() {
+        override fun requestRead(): Boolean {
             requestReadCount++
+            return true
         }
 
         public fun performRead() {

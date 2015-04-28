@@ -42,15 +42,6 @@ public class AsyncProducerTest : TestCase() {
         testProducer.value = "data2"
         testProducer.emitReadRequest()
 
-        // effect (should be no effect)
-        assertEquals(1, testProducer.readCount)
-        assertEquals(2, testConsumer.statesLog.size())
-        assertTrue(testConsumer.statesLog[0] is Reading)
-        assertEquals(Ready("data"), testConsumer.statesLog[1])
-
-        // action
-        executor.execNext() // this should cause to readRequest() being emitted
-
         // effect
         assertEquals(1, testProducer.readCount)
         assertEquals(3, testConsumer.statesLog.size())
@@ -120,8 +111,9 @@ private class CountingMockExecutor : Executor {
 private class LoggingTestConsumer<T> : CountingTestConsumer<T>() {
     public val statesLog: MutableList<T> = ArrayList()
 
-    override fun requestRead() {
-        super.requestRead()
+    override fun requestRead() :Boolean {
+        val readRequested = super.requestRead()
         statesLog.add(value)
+        return readRequested
     }
 }
