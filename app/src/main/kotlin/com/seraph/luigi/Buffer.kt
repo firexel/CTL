@@ -11,20 +11,20 @@ public class Buffer<T>(initialValue: T = null) : BaseConsumerProducer<T, T>() {
 
     synchronized override fun bindProducer(producer: Producer<T>) {
         super.bindProducer(producer)
-        requestRead()
+        consume()?.invoke()
     }
 
-    synchronized override fun read(): T {
+    synchronized override fun produce(): T {
         val producer = producer
         if (dirty && producer != null) {
-            value = producer.read()
+            value = producer.produce()
             dirty = false
         }
         return value
     }
 
-    synchronized override fun requestRead(): Boolean {
+    synchronized override fun consume(): (() -> Unit)? {
         dirty = true
-        return consumer != null && consumer!!.requestRead()
+        return consumer?.consume()
     }
 }

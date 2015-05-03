@@ -76,13 +76,12 @@ public class ObserversTest : TestCase() {
         public var requestReadCount: Int = 0
         public var value: T = null
 
-        override fun requestRead(): Boolean {
+        override fun consume(): (() -> Unit)? = {
             requestReadCount++
-            return true
         }
 
         public fun performRead() {
-            value = producer!!.read()
+            value = producer!!.produce()
         }
     }
 }

@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 public class ConstantProducerTest : TestCase() {
     public fun test_constantProducer_new() {
         val producer = ConstantProducer(5)
-        assertEquals(5, producer.read())
+        assertEquals(5, producer.produce())
     }
 
     public fun test_constantProducer_extendsAllTypes() {

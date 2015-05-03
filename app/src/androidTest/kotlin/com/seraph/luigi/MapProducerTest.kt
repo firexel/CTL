@@ -31,13 +31,13 @@ public class MapProducerTest : TestCase() {
         val dst = src map { it.toString() }
 
         // effect
-        assertEquals("5", dst.read())
+        assertEquals("5", dst.produce())
 
         // action
         7 bindTo src
 
         // effect
-        assertEquals("7", dst.read())
+        assertEquals("7", dst.produce())
     }
 
     public fun test_mapProducer_for2Sources() {
@@ -48,19 +48,19 @@ public class MapProducerTest : TestCase() {
         val dst = src1 and src2 map { a, b -> a * b }
 
         // effect
-        assertEquals(6, dst.read())
+        assertEquals(6, dst.produce())
 
         // action
         7 bindTo src1
 
         // effect
-        assertEquals(21, dst.read())
+        assertEquals(21, dst.produce())
 
         // action
         5 bindTo src2
 
         // effect
-        assertEquals(35, dst.read())
+        assertEquals(35, dst.produce())
     }
 
     public fun test_mapProducer_for3Sources() {
@@ -72,25 +72,25 @@ public class MapProducerTest : TestCase() {
         val dst = src1 and src2 and src3 map { a, b, c -> a + b + c }
 
         // effect
-        assertEquals("abc", dst.read())
+        assertEquals("abc", dst.produce())
 
         // action
         "A" bindTo src1
 
         // effect
-        assertEquals("Abc", dst.read())
+        assertEquals("Abc", dst.produce())
 
         // action
         "B" bindTo src2
 
         // effect
-        assertEquals("ABc", dst.read())
+        assertEquals("ABc", dst.produce())
 
         // action
         "Kabum!" bindTo src3
 
         // effect
-        assertEquals("ABKabum!", dst.read())
+        assertEquals("ABKabum!", dst.produce())
     }
 
     public fun test_mapProducer_for4Sources() {
@@ -103,7 +103,7 @@ public class MapProducerTest : TestCase() {
         val dst = src1 and src2 and src3 and src4 map { a, b, c, d -> "$a $b $c $d" }
 
         // effect
-        assertEquals("Sun Mercury Venus Earth", dst.read())
+        assertEquals("Sun Mercury Venus Earth", dst.produce())
 
         // action
         "Small" bindTo src1
@@ -112,7 +112,7 @@ public class MapProducerTest : TestCase() {
         "man"   bindTo src4
 
         // effect
-        assertEquals("Small step for man", dst.read()) // but huge leap for mankind
+        assertEquals("Small step for man", dst.produce()) // but huge leap for mankind
     }
 
     private data class Building(
@@ -135,7 +135,7 @@ public class MapProducerTest : TestCase() {
         // effect
         assertEquals(
                 Building("Burj Khalifa", 163, 309473.5, "UAE", setOf("steel", "glass", "concrete")),
-                building.read()
+                building.produce()
         )
     }
 }

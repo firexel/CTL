@@ -16,7 +16,7 @@ public class BufferTest : TestCase() {
         val consumer = CountingTestConsumer<Int>()
 
         // preconditions
-        assertEquals(5, buffer.read())
+        assertEquals(5, buffer.produce())
         assertTrue(buffer is Consumer<Int>)
         assertTrue(buffer is Producer<Int>)
         assertEquals(null, producer.value)
@@ -28,7 +28,7 @@ public class BufferTest : TestCase() {
         42 bindTo buffer
 
         // effect
-        assertEquals(42, buffer.read())
+        assertEquals(42, buffer.produce())
 
         // action
         producer.value = 7
@@ -37,7 +37,7 @@ public class BufferTest : TestCase() {
 
         // effect
         assertEquals(1, producer.readCount)
-        assertEquals(7, buffer.read())
+        assertEquals(7, buffer.produce())
         assertEquals(1, producer.readCount)
         assertEquals(7, consumer.value)
         assertEquals(1, consumer.requestReadCount)
@@ -45,12 +45,12 @@ public class BufferTest : TestCase() {
         // action
         consumer.requestReadCount = 0
         producer.readCount = 0
-        5.times { buffer.requestRead() }
+        5.times { buffer.consume()?.invoke() }
 
         // effect
         assertEquals(5, producer.readCount)
-        assertEquals(7, buffer.read())
-        assertEquals(7, buffer.read())
+        assertEquals(7, buffer.produce())
+        assertEquals(7, buffer.produce())
         assertEquals(5, producer.readCount)
         assertEquals(7, consumer.value)
         assertEquals(5, consumer.requestReadCount)
@@ -61,13 +61,13 @@ private open class CountingTestProducer<T> : BaseProducer<T>() {
     public var readCount: Int = 0
     public var value: T = null
 
-    override fun read(): T {
+    override fun produce(): T {
         readCount++
         return value
     }
 
     fun emitReadRequest() {
-        consumer?.requestRead()
+        consumer?.consume()?.invoke()
     }
 }
 
@@ -77,12 +77,11 @@ private open class CountingTestConsumer<T> : BaseConsumer<T>() {
 
     override fun bindProducer(producer: Producer<T>) {
         super.bindProducer(producer)
-        requestRead()
+        consume()?.invoke()
     }
 
-    override fun requestRead(): Boolean {
+    override fun consume(): (() -> Unit)? = {
         requestReadCount++
-        value = producer!!.read()
-        return true
+        value = producer!!.produce()
     }
 }

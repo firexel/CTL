@@ -17,7 +17,7 @@ public class AsyncProducer<T>(
         source sinkTo NotifierConsumer<T>()
     }
 
-    override synchronized fun read(): ProducingState<T> {
+    override synchronized fun produce(): ProducingState<T> {
         if (dirty) {
             dirty = false
             state = Reading()
@@ -31,7 +31,7 @@ public class AsyncProducer<T>(
         executor.cancel()
         executor.exec {
             try {
-                setState(thisUpdateAge, Ready(source.read()))
+                setState(thisUpdateAge, Ready(source.produce()))
             } catch(th: Throwable) {
                 setState(thisUpdateAge, Error(th))
             }
@@ -41,16 +41,16 @@ public class AsyncProducer<T>(
     private synchronized fun setState(updateAge: Int, state: ProducingState<T>) {
         if (age == updateAge) {
             this.state = state
-            consumer?.requestRead()
+            consumer?.consume()?.invoke()
         }
     }
 
     private inner class NotifierConsumer<T> : BaseConsumer<T>() {
-        override fun requestRead(): Boolean {
+        override fun consume(): (() -> Unit)? {
             synchronized(this@AsyncProducer) {
                 dirty = true
             }
-            return consumer != null && consumer!!.requestRead()
+            return consumer?.consume();
         }
     }
 }

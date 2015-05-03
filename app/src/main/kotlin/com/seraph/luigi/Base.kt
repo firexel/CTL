@@ -8,13 +8,13 @@ package com.seraph.luigi
 public trait Consumer<T> {
     fun bindProducer(producer: Producer<T>)
     fun unbindProducer(): Producer<T>?
-    fun requestRead(): Boolean
+    fun consume(): (() -> Unit)?
 }
 
 public trait Producer<T> {
     fun bindConsumer(consumer: Consumer<T>)
     fun unbindConsumer(): Consumer<T>?
-    fun read(): T
+    fun produce(): T
 }
 
 fun <T, P : Producer<T>, C : Consumer<T>> P.sinkTo(consumer: C): C {

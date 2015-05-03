@@ -84,7 +84,7 @@ public class AsyncProducerTest : TestCase() {
 }
 
 private class FaultyProducer : BaseProducer<String>() {
-    override fun read(): String {
+    override fun produce(): String {
         throw RuntimeException("Test")
     }
 }
@@ -111,9 +111,11 @@ private class CountingMockExecutor : Executor {
 private class LoggingTestConsumer<T> : CountingTestConsumer<T>() {
     public val statesLog: MutableList<T> = ArrayList()
 
-    override fun requestRead() :Boolean {
-        val readRequested = super.requestRead()
-        statesLog.add(value)
-        return readRequested
+    override fun consume(): (() -> Unit)? {
+        val function = super.consume()
+        return {
+            function?.invoke()
+            statesLog.add(value)
+        }
     }
 }

@@ -8,7 +8,7 @@ package com.seraph.luigi
 public class ConstantProducer<T>(value:T) : BaseProducer<T>() {
     private final val value = value
 
-    override fun read(): T {
+    override fun produce(): T {
         return value
     }
 }
