@@ -10,17 +10,39 @@ import kotlin.test.assertEquals
 
 public class MapProducerTest : TestCase() {
 
+    public fun test_mapProducer_agedConsumerCallbacks() {
+        val producer = CountingTestProducer<String>()
+        producer.value = "abc"
+        assertEquals(0, producer.readCount)
+
+        val consumer = CountingTestConsumer<Int>()
+        assertEquals(0, consumer.consumeCount)
+
+        producer map { it.length() } sinkTo consumer
+        assertEquals(1, producer.readCount)
+        assertEquals(1, consumer.consumeCount)
+        assertEquals(3, consumer.value)
+
+        sequence { producer.retrieveConsumer()?.consume() }.take(5).toArrayList().forEach { it?.invoke() }
+        assertEquals(2, producer.readCount)
+        assertEquals(2, consumer.consumeCount)
+
+        5.times { producer.retrieveConsumer()?.consume()?.invoke() }
+        assertEquals(7, producer.readCount)
+        assertEquals(7, consumer.consumeCount)
+    }
+
     public fun test_mapProducer_requestsRead_whenOneOfItSourcesRequestsRead() {
         val src = Buffer(5)
         val countingConsumer = CountingTestConsumer<String>()
 
         // action
         src map { it.toString() } sinkTo countingConsumer
-        countingConsumer.requestReadCount = 0
+        countingConsumer.consumeCount = 0
         7 bindTo src
 
         // effect
-        assertEquals(1, countingConsumer.requestReadCount);
+        assertEquals(1, countingConsumer.consumeCount);
         assertEquals("7", countingConsumer.value)
     }
 

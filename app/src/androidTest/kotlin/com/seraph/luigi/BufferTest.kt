@@ -22,7 +22,7 @@ public class BufferTest : TestCase() {
         assertEquals(null, producer.value)
         assertEquals(0, producer.readCount)
         assertEquals(null, consumer.value)
-        assertEquals(0, consumer.requestReadCount)
+        assertEquals(0, consumer.consumeCount)
 
         // action
         42 bindTo buffer
@@ -40,10 +40,10 @@ public class BufferTest : TestCase() {
         assertEquals(7, buffer.produce())
         assertEquals(1, producer.readCount)
         assertEquals(7, consumer.value)
-        assertEquals(1, consumer.requestReadCount)
+        assertEquals(1, consumer.consumeCount)
 
         // action
-        consumer.requestReadCount = 0
+        consumer.consumeCount = 0
         producer.readCount = 0
         5.times { buffer.consume()?.invoke() }
 
@@ -53,7 +53,7 @@ public class BufferTest : TestCase() {
         assertEquals(7, buffer.produce())
         assertEquals(5, producer.readCount)
         assertEquals(7, consumer.value)
-        assertEquals(5, consumer.requestReadCount)
+        assertEquals(5, consumer.consumeCount)
     }
 }
 
@@ -69,10 +69,14 @@ private open class CountingTestProducer<T> : BaseProducer<T>() {
     fun emitReadRequest() {
         consumer?.consume()?.invoke()
     }
+
+    public fun retrieveConsumer(): Consumer<T>? {
+        return consumer
+    }
 }
 
 private open class CountingTestConsumer<T> : BaseConsumer<T>() {
-    public var requestReadCount: Int = 0
+    public var consumeCount: Int = 0
     public var value: T = null
 
     override fun bindProducer(producer: Producer<T>) {
@@ -81,7 +85,7 @@ private open class CountingTestConsumer<T> : BaseConsumer<T>() {
     }
 
     override fun consume(): (() -> Unit)? = {
-        requestReadCount++
+        consumeCount++
         value = producer!!.produce()
     }
 }
