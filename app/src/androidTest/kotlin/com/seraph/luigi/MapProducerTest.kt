@@ -13,22 +13,22 @@ public class MapProducerTest : TestCase() {
     public fun test_mapProducer_agedConsumerCallbacks() {
         val producer = CountingTestProducer<String>()
         producer.value = "abc"
-        assertEquals(0, producer.readCount)
+        assertEquals(0, producer.produceCount)
 
         val consumer = CountingTestConsumer<Int>()
         assertEquals(0, consumer.consumeCount)
 
         producer map { it.length() } sinkTo consumer
-        assertEquals(1, producer.readCount)
+        assertEquals(1, producer.produceCount)
         assertEquals(1, consumer.consumeCount)
         assertEquals(3, consumer.value)
 
         sequence { producer.retrieveConsumer()?.consume() }.take(5).toArrayList().forEach { it?.invoke() }
-        assertEquals(2, producer.readCount)
+        assertEquals(2, producer.produceCount)
         assertEquals(2, consumer.consumeCount)
 
         5.times { producer.retrieveConsumer()?.consume()?.invoke() }
-        assertEquals(7, producer.readCount)
+        assertEquals(7, producer.produceCount)
         assertEquals(7, consumer.consumeCount)
     }
 

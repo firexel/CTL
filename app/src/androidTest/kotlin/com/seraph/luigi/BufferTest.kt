@@ -20,7 +20,7 @@ public class BufferTest : TestCase() {
         assertTrue(buffer is Consumer<Int>)
         assertTrue(buffer is Producer<Int>)
         assertEquals(null, producer.value)
-        assertEquals(0, producer.readCount)
+        assertEquals(0, producer.produceCount)
         assertEquals(null, consumer.value)
         assertEquals(0, consumer.consumeCount)
 
@@ -36,33 +36,49 @@ public class BufferTest : TestCase() {
         producer sinkTo buffer sinkTo consumer
 
         // effect
-        assertEquals(1, producer.readCount)
+        assertEquals(1, producer.produceCount)
         assertEquals(7, buffer.produce())
-        assertEquals(1, producer.readCount)
+        assertEquals(1, producer.produceCount)
         assertEquals(7, consumer.value)
         assertEquals(1, consumer.consumeCount)
 
         // action
         consumer.consumeCount = 0
-        producer.readCount = 0
+        producer.produceCount = 0
         5.times { buffer.consume()?.invoke() }
 
         // effect
-        assertEquals(5, producer.readCount)
+        assertEquals(5, producer.produceCount)
         assertEquals(7, buffer.produce())
         assertEquals(7, buffer.produce())
-        assertEquals(5, producer.readCount)
+        assertEquals(5, producer.produceCount)
         assertEquals(7, consumer.value)
         assertEquals(5, consumer.consumeCount)
     }
+
+    public fun test_buffer_extensionFunction() {
+        val producer = CountingTestProducer("produced")
+        assertEquals(0, producer.produceCount)
+
+        val consumer = CountingTestConsumer<String>()
+        assertEquals(0, consumer.consumeCount)
+
+        producer buffer "default" sinkTo consumer
+        assertEquals("produced", consumer.value)
+        assertEquals(1, consumer.consumeCount)
+        assertEquals(1, producer.produceCount)
+
+        consumer.consume()?.invoke()
+        assertEquals(2, consumer.consumeCount)
+        assertEquals(1, producer.produceCount)
+    }
 }
 
-private open class CountingTestProducer<T> : BaseProducer<T>() {
-    public var readCount: Int = 0
-    public var value: T = null
+private open class CountingTestProducer<T>(public var value: T = null) : BaseProducer<T>() {
+    public var produceCount: Int = 0
 
     override fun produce(): T {
-        readCount++
+        produceCount++
         return value
     }
 

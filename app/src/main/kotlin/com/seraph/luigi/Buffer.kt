@@ -5,6 +5,10 @@ package com.seraph.luigi
  * Created by Alexander Naumov on 05.04.2015.
  */
 
+public fun <T> Producer<T>.buffer(defaultValue:T): Producer<T> {
+    return this sinkTo Buffer(defaultValue)
+}
+
 public class Buffer<T>(initialValue: T = null) : BaseConsumerProducer<T, T>() {
     synchronized private var value: T = initialValue
     private var dirty = false

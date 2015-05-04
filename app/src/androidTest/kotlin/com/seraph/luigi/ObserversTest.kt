@@ -11,25 +11,25 @@ import kotlin.test.assertEquals
 public class ObserversTest : TestCase() {
     public fun test_requestObserver_new() {
         val producer = CountingTestProducer<String>()
-        assertEquals(0, producer.readCount)
+        assertEquals(0, producer.produceCount)
 
         var requestObservations = 0
         producer observeRequests {
             requestObservations++
         }
 
-        assertEquals(0, producer.readCount)
+        assertEquals(0, producer.produceCount)
         assertEquals(0, requestObservations)
 
         3.times { producer.emitReadRequest() }
 
-        assertEquals(0, producer.readCount)
+        assertEquals(0, producer.produceCount)
         assertEquals(3, requestObservations)
     }
 
     public fun test_dataObserver_new() {
         val producer = CountingTestProducer<String>()
-        assertEquals(0, producer.readCount)
+        assertEquals(0, producer.produceCount)
 
         var observedData: String = ""
         producer observeData { data: String ->
@@ -42,14 +42,14 @@ public class ObserversTest : TestCase() {
             assertEquals(observedData, it)
         }
 
-        assertEquals(3, producer.readCount)
+        assertEquals(3, producer.produceCount)
     }
 
     public fun test_dataTransferObserver_new() {
         val producer = CountingTestProducer<String>()
         val consumer = ManualTestConsumer<String>()
 
-        assertEquals(0, producer.readCount)
+        assertEquals(0, producer.produceCount)
         assertEquals(0, consumer.requestReadCount)
 
         // action
@@ -59,7 +59,7 @@ public class ObserversTest : TestCase() {
         producer.emitReadRequest()
 
         // effect
-        assertEquals(0, producer.readCount)
+        assertEquals(0, producer.produceCount)
         assertEquals(1, consumer.requestReadCount)
         assertEquals("", observedData)
 
@@ -67,7 +67,7 @@ public class ObserversTest : TestCase() {
         consumer.performRead()
 
         // effect
-        assertEquals(1, producer.readCount)
+        assertEquals(1, producer.produceCount)
         assertEquals("a", consumer.value)
         assertEquals("a", observedData)
     }

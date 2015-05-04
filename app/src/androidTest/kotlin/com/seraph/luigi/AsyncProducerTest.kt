@@ -25,7 +25,7 @@ public class AsyncProducerTest : TestCase() {
         testProducer observeAt executor sinkTo testConsumer
 
         // effect
-        assertEquals(0, testProducer.readCount)
+        assertEquals(0, testProducer.produceCount)
         assertEquals(1, testConsumer.statesLog.size())
         assertTrue(testConsumer.statesLog[0] is Reading)
 
@@ -33,7 +33,7 @@ public class AsyncProducerTest : TestCase() {
         executor.execNext()
 
         // effect
-        assertEquals(1, testProducer.readCount)
+        assertEquals(1, testProducer.produceCount)
         assertEquals(2, testConsumer.statesLog.size())
         assertTrue(testConsumer.statesLog[0] is Reading)
         assertEquals(Ready("data"), testConsumer.statesLog[1])
@@ -43,7 +43,7 @@ public class AsyncProducerTest : TestCase() {
         testProducer.emitReadRequest()
 
         // effect
-        assertEquals(1, testProducer.readCount)
+        assertEquals(1, testProducer.produceCount)
         assertEquals(3, testConsumer.statesLog.size())
         assertTrue(testConsumer.statesLog[0] is Reading)
         assertEquals(Ready("data"), testConsumer.statesLog[1])
@@ -53,7 +53,7 @@ public class AsyncProducerTest : TestCase() {
         executor.execNext() // this should cause to read() being performed
 
         // effect
-        assertEquals(2, testProducer.readCount)
+        assertEquals(2, testProducer.produceCount)
         assertEquals(4, testConsumer.statesLog.size())
         assertTrue(testConsumer.statesLog[0] is Reading)
         assertEquals(Ready("data"), testConsumer.statesLog[1])
