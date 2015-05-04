@@ -5,7 +5,7 @@ package com.seraph.luigi
  * Created by Alexander Naumov on 05.04.2015.
  */
 
-public fun <T> Producer<T>.buffer(defaultValue:T): Producer<T> {
+public fun <T> Producer<T>.buffer(defaultValue: T): Producer<T> {
     return this sinkTo Buffer(defaultValue)
 }
 
@@ -21,8 +21,12 @@ public class Buffer<T>(initialValue: T = null) : BaseConsumerProducer<T, T>() {
     synchronized override fun produce(): T {
         val producer = producer
         if (dirty && producer != null) {
-            value = producer.produce()
-            dirty = false
+            try {
+                value = producer.produce()
+                dirty = false
+            } catch(ex: NoDataException) {
+                // ignore, we are already set dirty to true
+            }
         }
         return value
     }

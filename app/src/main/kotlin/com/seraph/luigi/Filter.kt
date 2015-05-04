@@ -53,5 +53,3 @@ public class FilterConsumerProducer<T>(
         acceptedValue = null
     }
 }
-
-public class NoDataException(message: String) : RuntimeException(message)

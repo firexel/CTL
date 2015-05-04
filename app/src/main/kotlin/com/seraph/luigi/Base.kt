@@ -23,7 +23,7 @@ fun <T, P : Producer<T>, C : Consumer<T>> P.sinkTo(consumer: C): C {
     return consumer
 }
 
-public abstract class BaseConsumer<T> : Consumer<T> {
+public abstract class   BaseConsumer<T> : Consumer<T> {
     synchronized protected var producer: Producer<T>? = null
         private set
 
@@ -92,3 +92,4 @@ private fun Any.checkNotBound(oldFieldValue: Any?, newFieldValue: Any) {
 }
 
 public class AlreadyBeingBoundException(message: String) : RuntimeException(message)
+public class NoDataException(message: String) : RuntimeException(message)

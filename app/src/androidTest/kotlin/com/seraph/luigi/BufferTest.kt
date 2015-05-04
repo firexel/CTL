@@ -72,6 +72,25 @@ public class BufferTest : TestCase() {
         assertEquals(2, consumer.consumeCount)
         assertEquals(1, producer.produceCount)
     }
+
+    public fun test_buffer_shouldCatchNoDataException_whenBeingConsumed() {
+        val producer = CountingTestProducer("bad string")
+        assertEquals(0, producer.produceCount)
+
+        val consumer = CountingTestConsumer<String>()
+        assertEquals(0, consumer.consumeCount)
+
+        producer filter { it contains "good" } buffer "default" sinkTo consumer
+        assertEquals("default", consumer.value)
+        assertEquals(1, consumer.consumeCount)
+        assertEquals(1, producer.produceCount)
+
+        producer.value = "good string"
+        producer.emitReadRequest()
+        assertEquals("good string", consumer.value)
+        assertEquals(2, consumer.consumeCount)
+        assertEquals(2, producer.produceCount)
+    }
 }
 
 private open class CountingTestProducer<T>(public var value: T = null) : BaseProducer<T>() {
