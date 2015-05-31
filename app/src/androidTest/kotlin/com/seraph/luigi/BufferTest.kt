@@ -3,6 +3,7 @@ package com.seraph.luigi
 import junit.framework.TestCase
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.failsWith
 
 /**
  * Luigi
@@ -10,6 +11,12 @@ import kotlin.test.assertTrue
  */
 
 public class BufferTest : TestCase() {
+    public fun test_buffer_shouldThrowNoDataException_ifNotInitialized() {
+        failsWith(javaClass<NoDataException>()) {
+            Buffer<Any>().produce()
+        }
+    }
+
     public fun test_buffer_readBehaviour() {
         val buffer = Buffer(5)
         val producer = CountingTestProducer<Int>()
