@@ -45,7 +45,7 @@ public class BufferTest : TestCase() {
         // action
         consumer.consumeCount = 0
         producer.produceCount = 0
-        5.times { buffer.consume()?.invoke() }
+        repeat(5) { buffer.consume()?.invoke() }
 
         // effect
         assertEquals(5, producer.produceCount)

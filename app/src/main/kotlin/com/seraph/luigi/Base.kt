@@ -5,13 +5,13 @@ package com.seraph.luigi
  * Created by Alexander Naumov on 05.04.2015.
  */
 
-public trait Consumer<T> {
+public interface Consumer<T> {
     fun bindProducer(producer: Producer<T>)
     fun unbindProducer(): Producer<T>?
     fun consume(): (() -> Unit)?
 }
 
-public trait Producer<T> {
+public interface Producer<T> {
     fun bindConsumer(consumer: Consumer<T>)
     fun unbindConsumer(): Consumer<T>?
     fun produce(): T

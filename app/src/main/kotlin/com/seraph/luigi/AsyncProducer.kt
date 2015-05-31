@@ -55,12 +55,12 @@ public class AsyncProducer<T>(
     }
 }
 
-public trait ProducingState<T> // it is part of public interface of producer. so must be explicit
+public interface ProducingState<T> // it is part of public interface of producer. so must be explicit
 public data class Reading<T>() : ProducingState<T>
 public data class Ready<T>(val data: T) : ProducingState<T>
 public data class Error<T>(val exception: Throwable) : ProducingState<T>
 
-public trait Executor {
+public interface Executor {
     fun cancel()
     fun exec(function: () -> Unit)
 }

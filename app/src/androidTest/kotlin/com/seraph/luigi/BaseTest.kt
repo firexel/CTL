@@ -82,12 +82,12 @@ public class BaseTest : TestCase() {
     }
 }
 
-private trait TestConsumer<T> : Consumer<T> {
+private interface TestConsumer<T> : Consumer<T> {
     public fun assertProducerEquals(producer: Producer<T>?)
     public fun assertProducer(predicate: (Producer<T>?) -> Boolean)
 }
 
-private trait TestProducer<T> : Producer<T> {
+private interface TestProducer<T> : Producer<T> {
     public fun assertConsumerEquals(consumer: Consumer<T>?)
 }
 

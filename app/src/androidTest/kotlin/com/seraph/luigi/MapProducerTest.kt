@@ -27,7 +27,7 @@ public class MapProducerTest : TestCase() {
         assertEquals(2, producer.produceCount)
         assertEquals(2, consumer.consumeCount)
 
-        5.times { producer.retrieveConsumer()?.consume()?.invoke() }
+        repeat(5) { producer.retrieveConsumer()?.consume()?.invoke() }
         assertEquals(7, producer.produceCount)
         assertEquals(7, consumer.consumeCount)
     }

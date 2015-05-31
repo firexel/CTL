@@ -11,7 +11,7 @@ public class MapProducer<O>(producers: List<Producer<*>>, readDelegate: () -> O)
 
     init {
         for (producer in producers) {
-            [suppress("UNCHECKED_CAST")]
+            @suppress("UNCHECKED_CAST")
             ((producer as Producer<Any?>) sinkTo NotifierConsumer<Any?>())
         }
     }

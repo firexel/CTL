@@ -21,7 +21,7 @@ public class ObserversTest : TestCase() {
         assertEquals(0, producer.produceCount)
         assertEquals(0, requestObservations)
 
-        3.times { producer.emitReadRequest() }
+        repeat(3) { producer.emitReadRequest() }
 
         assertEquals(0, producer.produceCount)
         assertEquals(3, requestObservations)
