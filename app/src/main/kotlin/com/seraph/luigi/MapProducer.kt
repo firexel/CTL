@@ -1,5 +1,7 @@
 package com.seraph.luigi
 
+import java.util.*
+
 /**
  * Luigi
  * Created by Alexander Naumov on 08.04.2015.
@@ -36,6 +38,24 @@ public class MapProducer<O>(producers: List<Producer<*>>, readDelegate: () -> O)
             }
         }
     }
+}
+
+public fun <T> merge(vararg producers: Producer<T>): Producer<T> {
+    if (producers.size() <= 0) {
+        throw IllegalArgumentException("Zero producers count is not allowed in merge()")
+    }
+    return MapProducer(producers.asList()) { mergeProducers(producers) }
+}
+
+private fun <T> mergeProducers(producers: Array<out Producer<T>>): T {
+    for (producer in producers) {
+        try {
+            return producer.produce()
+        } catch (ex: NoDataException) {
+            // ignore
+        }
+    }
+    throw NoDataException("None of ${producers.asList()} does supply a data")
 }
 
 public fun <I, O> Producer<I>.map(converter: (I) -> O): Producer<O> {
@@ -99,4 +119,3 @@ public class ProducerTupleOf5<I1, I2, I3, I4, I5>(p1: Producer<I1>, p2: Producer
         return MapProducer(listOf(p1, p2, p3, p4, p5)) { converter(p1.produce(), p2.produce(), p3.produce(), p4.produce(), p5.produce()) }
     }
 }
-
